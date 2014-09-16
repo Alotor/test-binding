@@ -25,6 +25,10 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.google.gson.stream.JsonReader
 
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
+
+
 /**
  * Creates DataBindingSource objects from JSON in the request body
  *
@@ -61,6 +65,20 @@ class JsonDataBindingSourceCreator extends AbstractRequestBodyDataBindingSourceC
         }
         else {
             result = super.createDataBindingSource(mimeType, bindingTargetType, bindingSource)
+
+            if (bindingSource instanceof javax.servlet.http.HttpServletRequest){
+                Map paramsMap = ((org.grails.databinding.SimpleMapDataBindingSource)result).map
+
+                println "!! $paramsMap"
+                println ">> ${(javax.servlet.http.HttpServletRequest)bindingSource}"
+                println "...."
+                final GrailsWebRequest grailsWebRequest = GrailsWebRequest.lookup((javax.servlet.http.HttpServletRequest)bindingSource)
+
+                final GrailsParameterMap parameterMap = grailsWebRequest.getParams()
+                println ">> paramMap $parameterMap"
+                paramsMap.putAll(parameterMap)
+                println ">> r: ${((org.grails.databinding.SimpleMapDataBindingSource)result).map}"
+            }
         }
         println ">> result: ${result.propertyNames}"
         return result

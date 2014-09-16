@@ -10,4 +10,9 @@ class TestController {
         ]
         render result as JSON
     }
+
+    def dootherstuff(FieldCCommand cmd) {
+        def result = cmd.properties
+        render result as JSON
+    }
 }
